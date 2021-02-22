@@ -1,0 +1,82 @@
+#!/bin/sh
+
+# License: GNU GPLv3
+
+# Version: 1.01
+
+# Dependencies: awk fzf grep lynx mpv nano youtube-dl
+
+# Colors
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+clear
+echo -e "${GREEN}Welcome to crunchii!${NC}"
+echo ""
+
+echo -e "${BLUE}[1] Play anime"
+echo -e "[2] Play anime from favorities"
+echo -e "[3] Edit favorities list"
+echo -e "[4] Play from custom link"
+echo -e "[0] Exit${NC}"
+echo ""
+read -rp "What do you want to do: " do
+echo ""
+
+if [[ ${do} == "1" ]]; then
+    # Declare name of the anime and ep.
+    read -rp "Name: " NAME
+    read -rp "EP: " EP
+    echo ""
+
+    # Extract episode's link and play it
+    mpv --fs $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+
+elif [[ ${do} == "2" ]]; then
+
+    if [[ -d $HOME/.config/shell-scripts/cr-cli ]]; then # Check if config folder exists
+
+        if [[ -e $HOME/.config/shell-scripts/cr-cli/favorities ]]; then # Check if favorities text file exists
+           # Select anime
+           cat $HOME/.config/shell-scripts/cr-cli/favorities | fzf > $HOME/.cache/cr-cli_fav-watch
+           
+           # Declare name of the anime and ep.
+           NAME=$(cat $HOME/.cache/cr-cli_fav-watch)
+           echo -e "Name: $(cat $HOME/.cache/cr-cli_fav-watch)"
+           read -rp "EP: " EP
+           echo ""
+
+           # Extract episode's link and play it
+           mpv --fs $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+
+           # Delete cache file
+           rm -rf $HOME/.cache/cr-cli_fav-watch
+
+        else
+            echo -e "${RED}No favorities file found, please add some animes${NC}"
+            echo -e "${RED}Exiting...${NC}"
+        fi
+
+    else
+        echo -e "${RED}No favorities file found, please add some animes${NC}"
+        echo -e "${RED}Exiting...${NC}"
+    fi
+
+elif [[ ${do} == "3" ]]; then
+    mkdir -p $HOME/.config/shell-scripts/cr-cli/
+    nano $HOME/.config/shell-scripts/cr-cli/favorities
+
+elif [[ ${do} == "4" ]]; then
+    read -rp "Full link after '.com/': " LINK
+    echo ""
+    mpv --fs https://www.crunchyroll.com/"${LINK}"
+    
+elif [[ ${do} == "0" ]];then
+    echo -e "${RED}Exiting...${NC}"
+    exit 0
+else
+    echo -e "${RED}${do} is not a valid option, exiting...${NC}"
+    exit 1
+fi
