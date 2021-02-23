@@ -1,2 +1,2 @@
 # crunchii
-A script to watch anime from crunchyroll from the command line
+A command line tool to watch anime from crunchyroll
