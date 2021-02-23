@@ -2,7 +2,7 @@
 
 # License: GNU GPLv3
 
-# Version: 1.01
+# Version: 1.1
 
 # Dependencies: awk fzf grep lynx mpv nano youtube-dl
 
@@ -11,6 +11,10 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
+
+# Default apps
+player="mpv --fs"
+editor="nano"
 
 clear
 echo -e "${GREEN}Welcome to crunchii!${NC}"
@@ -32,7 +36,7 @@ if [[ ${do} == "1" ]]; then
     echo ""
 
     # Extract episode's link and play it
-    mpv --fs $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+    ${player} $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
 elif [[ ${do} == "2" ]]; then
 
@@ -49,7 +53,7 @@ elif [[ ${do} == "2" ]]; then
            echo ""
 
            # Extract episode's link and play it
-           mpv --fs $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+           ${player} $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
            # Delete cache file
            rm -rf $HOME/.cache/cr-cli_fav-watch
@@ -66,12 +70,12 @@ elif [[ ${do} == "2" ]]; then
 
 elif [[ ${do} == "3" ]]; then
     mkdir -p $HOME/.config/shell-scripts/cr-cli/
-    nano $HOME/.config/shell-scripts/cr-cli/favorities
+    ${editor} $HOME/.config/shell-scripts/cr-cli/favorities
 
 elif [[ ${do} == "4" ]]; then
     read -rp "Full link after '.com/': " LINK
     echo ""
-    mpv --fs https://www.crunchyroll.com/"${LINK}"
+    ${player} https://www.crunchyroll.com/"${LINK}"
     
 elif [[ ${do} == "0" ]];then
     echo -e "${RED}Exiting...${NC}"
