@@ -16,6 +16,7 @@ NC='\033[0m' # No Color
 player="mpv --fs"
 editor="nano"
 
+# The actual start of the scripts
 clear
 echo -e "${GREEN}Welcome to crunchii!${NC}"
 echo ""
@@ -29,7 +30,7 @@ echo ""
 read -rp "What do you want to do: " do
 echo ""
 
-if [[ ${do} == "1" ]]; then
+if [ ${do} = "1" ]; then
     # Declare name of the anime and ep.
     read -rp "Name: " NAME
     read -rp "EP: " EP
@@ -38,17 +39,17 @@ if [[ ${do} == "1" ]]; then
     # Extract episode's link and play it
     ${player} $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
-elif [[ ${do} == "2" ]]; then
+elif [ ${do} = "2" ]; then
 
-    if [[ -d $HOME/.config/shell-scripts/cr-cli ]]; then # Check if config folder exists
+    if [ -d $HOME/.config/crunchii ]; then # Check if config folder exists
 
-        if [[ -e $HOME/.config/shell-scripts/cr-cli/favorities ]]; then # Check if favorities text file exists
+        if [ -e $HOME/.config/crunchii/favorities ]; then # Check if favorities text file exists
            # Select anime
-           cat $HOME/.config/shell-scripts/cr-cli/favorities | fzf > $HOME/.cache/cr-cli_fav-watch
+           cat $HOME/.config/crunchii/favorities | fzf > $HOME/.cache/crunchii_fav-watch
            
            # Declare name of the anime and ep.
-           NAME=$(cat $HOME/.cache/cr-cli_fav-watch)
-           echo -e "Name: $(cat $HOME/.cache/cr-cli_fav-watch)"
+           NAME=$(cat $HOME/.cache/crunchii_fav-watch)
+           echo -e "Name: $(cat $HOME/.cache/crunchii_fav-watch)"
            read -rp "EP: " EP
            echo ""
 
@@ -56,7 +57,7 @@ elif [[ ${do} == "2" ]]; then
            ${player} $(lynx -dump -listonly https://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
            # Delete cache file
-           rm -rf $HOME/.cache/cr-cli_fav-watch
+           rm -rf $HOME/.cache/crunchii_fav-watch
 
         else
             echo -e "${RED}No favorities file found, please add some animes${NC}"
@@ -68,16 +69,16 @@ elif [[ ${do} == "2" ]]; then
         echo -e "${RED}Exiting...${NC}"
     fi
 
-elif [[ ${do} == "3" ]]; then
-    mkdir -p $HOME/.config/shell-scripts/cr-cli/
-    ${editor} $HOME/.config/shell-scripts/cr-cli/favorities
+elif [ ${do} = "3" ]; then
+    mkdir -p $HOME/.config/crunchii/
+    ${editor} $HOME/.config/crunchii/favorities
 
-elif [[ ${do} == "4" ]]; then
+elif [[ ${do} = "4" ]]; then
     read -rp "Full link after '.com/': " LINK
     echo ""
     ${player} https://www.crunchyroll.com/"${LINK}"
     
-elif [[ ${do} == "0" ]];then
+elif [[ ${do} = "0" ]];then
     echo -e "${RED}Exiting...${NC}"
     exit 0
 else
