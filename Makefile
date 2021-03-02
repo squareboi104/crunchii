@@ -8,3 +8,5 @@ install:
  
 uninstall:
 	@rm -f $(DESTDIR)/crunchii 
+
+.PHONY: all install uninstall
