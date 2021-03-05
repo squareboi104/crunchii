@@ -1,8 +1,7 @@
 #!/bin/sh
 
-# License: GNU GPLv3
-
 # Version: 1.1
+# License: GNU GPLv3
 
 # Dependencies: awk fzf grep lynx mpv nano youtube-dl
 
@@ -12,11 +11,12 @@ BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-# Default apps
+# Default progs
 player="mpv --fs"
 editor="nano"
 
-# The actual start of the scripts
+# === #
+
 clear
 echo -e "${GREEN}Welcome to crunchii!${NC}"
 echo ""
