@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# Version: 1.1
 # License: GNU GPLv3
 
 # Dependencies: awk fzf grep lynx mpv nano youtube-dl
