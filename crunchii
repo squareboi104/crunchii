@@ -28,13 +28,9 @@ echo -e "[4] Play from custom link"
 echo -e "[0] Exit${NC}"
 
 echo ""
-${SEPARATOR}
-echo ""
 
 read -rp "What do you want to do: " do
 
-echo ""
-${SEPARATOR}
 echo ""
 
 case ${do} in
@@ -43,8 +39,6 @@ case ${do} in
         read -rp "Name: " NAME
         read -rp "EP: " EP
 
-        echo ""
-        ${SEPARATOR}
         echo ""
 
         # Extract episode's link and play it
@@ -60,8 +54,6 @@ case ${do} in
 
             read -rp "Do you want to watch the next episode? [Y/N] " watch_next
 
-            echo ""
-            ${SEPARATOR}
             echo ""
 
             if [ ${watch_next} = "Y" ]; then
@@ -88,8 +80,6 @@ case ${do} in
                 read -rp "EP: " EP
 
                 echo ""
-                ${SEPARATOR}
-                echo ""
 
                 # Extract episode's link and play it
                 mpv --fs $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
@@ -104,8 +94,6 @@ case ${do} in
 
                     read -rp "Do you want to watch the next episode? [Y/N] " watch_next
 
-                    echo ""
-                    ${SEPARATOR}
                     echo ""
 
                     if [ ${watch_next} = "Y" ]; then
@@ -139,19 +127,13 @@ case ${do} in
     4)
         read -rp "Full link after '.com/': " LINK
         echo ""
-        ${SEPARATOR}
-        echo ""
         ${player} https://www.crunchyroll.com/"${LINK}"
     ;;
     0)
-        ${SEPARATOR}
-        echo ""
         echo -e "${RED}Exiting...${NC}"
         exit 0
     ;;
     *)
-        ${SEPARATOR}
-        echo ""
         echo -e "${RED}${do} is not a valid option, exiting...${NC}"
         exit 1
     ;;
