@@ -1,6 +1,8 @@
 # CRUNCHII
 A command line tool to watch anime from crunchyroll
 
+## 
+
 ### INSTALL
 
 ```bash
