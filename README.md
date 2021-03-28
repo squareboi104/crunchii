@@ -1,7 +1,7 @@
-# crunchii
+# CRUNCHII
 A command line tool to watch anime from crunchyroll
 
-## INSTALL
+### INSTALL
 
 ```bash
 git clone https://github.com/lemonguy-104/crunchii.git
@@ -9,7 +9,7 @@ cd crunchii
 sudo make install
 ```
 
-## UNINSTALL
+### UNINSTALL
 
 ```bash
 cd crunchii
@@ -17,7 +17,7 @@ sudo make uninstall
 cd ../ && rm -rf crunchii
 ```
 
-## UPDATE
+### UPDATE
 
 ```bash
 cd crunchii
