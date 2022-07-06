@@ -26,3 +26,7 @@ cd crunchii
 git pull
 sudo make install
 ```
+
+### DEPENDENCIES
+
+mpv lynx grep awk youtube-dl fzf
