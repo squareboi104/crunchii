@@ -45,9 +45,9 @@ case ${do} in
         ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
         # Watch next
-        watch_next="Y"
+        watch_next="y"
 
-        while [ ${watch_next} = "Y" ]; do
+        while [ ${watch_next} = "y" ]; do
             echo ""
             ${SEPARATOR}
             echo ""
@@ -56,9 +56,9 @@ case ${do} in
 
             echo ""
 
-            if [ ${watch_next} = "Y" ]; then
+            if [ ${watch_next} = "y" ]; then
                 ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-            elif [ ${watch_next} = "N" ]; then
+            elif [ ${watch_next} = "n" ]; then
                 echo -e "${RED}Exiting...${NC}"
                 exit 0
             else
@@ -85,9 +85,9 @@ case ${do} in
                 mpv --fs $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
                 # Watch next
-                watch_next="Y"
+                watch_next="y"
 
-                while [ ${watch_next} = "Y" ]; do
+                while [ ${watch_next} = "y" ]; do
                     echo ""
                     ${SEPARATOR}
                     echo ""
@@ -96,9 +96,9 @@ case ${do} in
 
                     echo ""
 
-                    if [ ${watch_next} = "Y" ]; then
+                    if [ ${watch_next} = "y" ]; then
                         ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-                    elif [ ${watch_next} = "N" ]; then
+                    elif [ ${watch_next} = "n" ]; then
                         echo -e "${RED}Exiting...${NC}"
                         exit 0
                     else
