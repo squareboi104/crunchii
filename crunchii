@@ -15,6 +15,34 @@ SEPARATOR="echo -e "${BLUE}#${GREEN}===${BLUE}#${NC}""
 player="mpv --fs"
 editor="nano"
 
+play(){
+        # Extract episode's link and play it
+        ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+
+        # Watch next
+        watch_next="y"
+
+        while [ ${watch_next} = "y" ]; do
+            echo ""
+            ${SEPARATOR}
+            echo ""
+
+            read -rp "Do you want to watch the next episode? [Y/N] " watch_next
+
+            echo ""
+
+            if [ ${watch_next} = "y" ]; then
+                ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
+            elif [ ${watch_next} = "n" ]; then
+                echo -e "${RED}Exiting...${NC}"
+                exit 0
+            else
+                echo -e "${RED}${do} is not a valid option, exiting...${NC}"
+                exit 1
+            fi
+        done
+}
+
 # === #
 
 clear
@@ -41,31 +69,8 @@ case ${do} in
 
         echo ""
 
-        # Extract episode's link and play it
-        ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+        play
 
-        # Watch next
-        watch_next="y"
-
-        while [ ${watch_next} = "y" ]; do
-            echo ""
-            ${SEPARATOR}
-            echo ""
-
-            read -rp "Do you want to watch the next episode? [Y/N] " watch_next
-
-            echo ""
-
-            if [ ${watch_next} = "y" ]; then
-                ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-            elif [ ${watch_next} = "n" ]; then
-                echo -e "${RED}Exiting...${NC}"
-                exit 0
-            else
-                echo -e "${RED}${do} is not a valid option, exiting...${NC}"
-                exit 1
-            fi
-        done
     ;;
     2)
         if [ -d $HOME/.config/crunchii ]; then # Check if config folder exists
@@ -81,31 +86,7 @@ case ${do} in
 
                 echo ""
 
-                # Extract episode's link and play it
-                mpv --fs $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
-
-                # Watch next
-                watch_next="y"
-
-                while [ ${watch_next} = "y" ]; do
-                    echo ""
-                    ${SEPARATOR}
-                    echo ""
-
-                    read -rp "Do you want to watch the next episode? [Y/N] " watch_next
-
-                    echo ""
-
-                    if [ ${watch_next} = "y" ]; then
-                        ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-                    elif [ ${watch_next} = "n" ]; then
-                        echo -e "${RED}Exiting...${NC}"
-                        exit 0
-                    else
-                        echo -e "${RED}${do} is not a valid option, exiting...${NC}"
-                        exit 1
-                    fi
-                done
+                play
                     
                 # Delete cache file
                 rm -f $HOME/.cache/crunchii_fav-watch
