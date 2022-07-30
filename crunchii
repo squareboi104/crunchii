@@ -9,116 +9,144 @@ RED='\033[0;31m'
 BLUE='\033[0;34m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-SEPARATOR="echo -e "${BLUE}#${GREEN}===${BLUE}#${NC}""
+SEPARATOR="echo -e "${BLUE}=====${BLUE}${NC}""
 
 # Default progs
-player="mpv --fs"
-editor="nano"
+PLAYER="mpv --fs --no-terminal"
+EDITOR="nano"
 
-function play(){
+# Episode player
+eplay() { 
+    echo -e "${BLUE}Playing EP${EP}!${NC}"
+    ${PLAYER} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+}
+
+eplayn() {
+    EP=$(expr $EP + 1)
+    echo -e "${BLUE}Playing EP${EP}!${NC}"
+    #${PLAYER} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
+    ${PLAYER} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
+}
+
+play () {
         # Extract episode's link and play it
-        ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
-
+        eplay
         # Watch next
-        watch_next="y"
+        WATCH_NEXT="y"
 
-        while [ ${watch_next} = "y" ]; do
+        while [[ ${WATCH_NEXT} = "y" ]] || [[ ${WATCH_NEXT} = "r" ]] || [[ ${WATCH_NEXT} = "" ]]; do
             echo ""
             ${SEPARATOR}
             echo ""
 
-            read -rp "Do you want to watch the next episode? [Y/n] " watch_next
+            read -rp "Do you want to watch the next episode? Or Re-watch it? [Y/n/r]: " WATCH_NEXT
 
             echo ""
 
-            if [ ${watch_next} = "y" ]; then
-                ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-            elif [ ${watch_next} = "n" ]; then
-                echo -e "${RED}Exiting...${NC}"
-                exit 0
-            else
-                ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
-            fi
+            case ${WATCH_NEXT} in
+                y)
+                    eplayn
+                    ;;
+                n)
+                    echo -e "${RED}Exiting...${NC}"
+                    exit 0
+                    ;;
+                r)
+                    eplay
+                    ;;
+                *)
+                    eplayn
+                    ;;
+            esac
         done
 }
 
-function opt(){
-clear
-echo -e "${GREEN}Welcome to crunchii!${NC}"
-echo ""
-
-echo -e "${BLUE}[1] Play anime"
-echo -e "[2] Play anime from favorities"
-echo -e "[3] Edit favorities list"
-echo -e "[4] Play from custom link"
-echo -e "[0] Exit${NC}"
-
-echo ""
-
-read -rp "What do you want to do: " do
-
-echo ""
-
-case ${do} in
-    1)
-        # Declare name of the anime and ep.
-        read -rp "Name: " NAME
-        read -rp "EP: " EP
-
-        echo ""
-
-        play
-
-    ;;
-    2)
-        if [ -d $HOME/.config/crunchii ]; then # Check if config folder exists
-
-            if [ -e $HOME/.config/crunchii/favorities ]; then # Check if favorities text file exists
-                # Select anime
-                cat $HOME/.config/crunchii/favorities | fzf > $HOME/.cache/crunchii_fav-watch
-           
-                # Declare name of the anime and ep.
-                NAME=$(cat $HOME/.cache/crunchii_fav-watch)
-                echo -e "Name: $(cat $HOME/.cache/crunchii_fav-watch)"
-                read -rp "EP: " EP
-
-                echo ""
-
-                play
-                    
-                # Delete cache file
-                rm -f $HOME/.cache/crunchii_fav-watch
-
+opt() {
+    clear
+    echo -e "${GREEN}Welcome to crunchii!${NC}"
+    echo ""
+    
+    echo -e "${BLUE}[1] Play anime"
+    echo -e "[2] Play anime from favorities"
+    echo -e "[3] Edit favorities list"
+    echo -e "[4] Play from custom link"
+    echo -e "[0] Exit${NC}"
+    
+    echo ""
+    
+    read -rp "What do you want to do: " do
+    
+    echo ""
+    
+    case ${do} in
+        1)
+            # Declare name of the anime and ep.
+            read -rp "Name: " NAME
+            read -rp "EP: " EP
+    
+            echo ""
+    
+            play
+    
+            ;;
+        2)
+            if [ -d $HOME/.config/crunchii ]; then # Check if config folder exists
+    
+                if [ -e $HOME/.config/crunchii/favorities ]; then # Check if favorities text file exists
+                    # Select anime
+                    cat $HOME/.config/crunchii/favorities | fzf > $HOME/.cache/crunchii_fav-watch
+               
+                    # Declare name of the anime and ep.
+                    NAME=$(cat $HOME/.cache/crunchii_fav-watch)
+                    echo -e "Name: $(cat $HOME/.cache/crunchii_fav-watch)"
+                    read -rp "EP: " EP
+    
+                    echo ""
+                    ${SEPARATOR}
+                    echo ""
+    
+                    play
+                        
+                    # Delete cache file
+                    rm -f $HOME/.cache/crunchii_fav-watch
+    
+                else
+                    echo -e "${RED}No favorities file found, use option '3' to create and edit it${NC}"
+                    sleep 2
+                    opt
+                fi
+    
             else
                 echo -e "${RED}No favorities file found, use option '3' to create and edit it${NC}"
+                sleep 2
                 opt
             fi
-
-        else
-            echo -e "${RED}No favorities file found, use option '3' to create and edit it${NC}"
+            ;;
+        3)
+            mkdir -p $HOME/.config/crunchii/
+            ${EDITOR} $HOME/.config/crunchii/favorities
             opt
-        fi
-    ;;
-    3)
-        mkdir -p $HOME/.config/crunchii/
-        ${editor} $HOME/.config/crunchii/favorities
-        opt
-    ;;
-    4)
-        read -rp "Full link after '.com/': " LINK
-        echo ""
-        ${player} https://www.crunchyroll.com/"${LINK}"
-    ;;
-    0)
-        echo -e "${RED}Exiting...${NC}"
-        exit 0
-    ;;
-    *)
-        echo -e "${RED}${do} is not a valid option...${NC}"
-        sleep 3
-        opt
-    ;;
-esac
+            ;;
+        4)
+            read -rp "Full link after '.com/': " LINK
+            echo ""
+            ${PLAYER} https://www.crunchyroll.com/"${LINK}"
+            ;;
+        0)
+            echo -e "${RED}Exiting...${NC}"
+            exit 0
+            ;;
+        "")
+            echo -e "${RED}Please select an option...${NC}"
+            sleep 2
+            opt
+            ;;
+        *)
+            echo -e "${RED}${do} is not a valid option...${NC}"
+            sleep 2
+            opt
+            ;;
+    esac
 }
 
 opt
