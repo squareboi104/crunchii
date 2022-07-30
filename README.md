@@ -6,7 +6,7 @@ A command line tool to watch anime from crunchyroll
 ### INSTALL
 
 ```bash
-git clone https://github.com/lemonguy-104/crunchii.git
+git clone https://github.com/squareboi104/crunchii.git
 cd crunchii
 sudo make install
 ```

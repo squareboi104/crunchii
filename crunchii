@@ -15,7 +15,7 @@ SEPARATOR="echo -e "${BLUE}#${GREEN}===${BLUE}#${NC}""
 player="mpv --fs"
 editor="nano"
 
-play(){
+function play(){
         # Extract episode's link and play it
         ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-${EP}-" | awk '{print $2}')
 
@@ -27,7 +27,7 @@ play(){
             ${SEPARATOR}
             echo ""
 
-            read -rp "Do you want to watch the next episode? [Y/N] " watch_next
+            read -rp "Do you want to watch the next episode? [Y/n] " watch_next
 
             echo ""
 
@@ -37,14 +37,12 @@ play(){
                 echo -e "${RED}Exiting...${NC}"
                 exit 0
             else
-                echo -e "${RED}${do} is not a valid option, exiting...${NC}"
-                exit 1
+                ${player} $(lynx -dump -listonly http://www.crunchyroll.com/"${NAME}" | grep "episode-$(expr ${EP} + 1)-" | awk '{print $2}')
             fi
         done
 }
 
-# === #
-
+function opt(){
 clear
 echo -e "${GREEN}Welcome to crunchii!${NC}"
 echo ""
@@ -92,18 +90,19 @@ case ${do} in
                 rm -f $HOME/.cache/crunchii_fav-watch
 
             else
-                echo -e "${RED}No favorities file found, use optioen '3' to create and edit it${NC}"
-                echo -e "${RED}Exiting...${NC}"
+                echo -e "${RED}No favorities file found, use option '3' to create and edit it${NC}"
+                opt
             fi
 
         else
-            echo -e "${RED}No favorities file found, use optioen '3' to create and edit it${NC}"
-            echo -e "${RED}Exiting...${NC}"
+            echo -e "${RED}No favorities file found, use option '3' to create and edit it${NC}"
+            opt
         fi
     ;;
     3)
         mkdir -p $HOME/.config/crunchii/
         ${editor} $HOME/.config/crunchii/favorities
+        opt
     ;;
     4)
         read -rp "Full link after '.com/': " LINK
@@ -115,7 +114,11 @@ case ${do} in
         exit 0
     ;;
     *)
-        echo -e "${RED}${do} is not a valid option, exiting...${NC}"
-        exit 1
+        echo -e "${RED}${do} is not a valid option...${NC}"
+        sleep 3
+        opt
     ;;
 esac
+}
+
+opt
